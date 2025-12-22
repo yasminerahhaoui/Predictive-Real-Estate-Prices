@@ -1,10 +1,15 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import pandas as pd
 import numpy as np
 import joblib
 from sklearn.preprocessing import LabelEncoder
 from fastapi.middleware.cors import CORSMiddleware
+import webbrowser
+import threading
+import time
 
 
 # =============================
@@ -33,6 +38,19 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# =============================
+# SERVIR LES FICHIERS STATIQUES
+# =============================
+# Monter le dossier static pour servir CSS, JS, images, etc.
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# =============================
+# ROUTE PRINCIPALE - SERVIR INDEX.HTML
+# =============================
+@app.get("/")
+async def read_root():
+    return FileResponse("static/index.html")
 
 # =============================
 # INPUT UTILISATEUR
@@ -118,3 +136,33 @@ def predict_price(user: UserInput):
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+# =============================
+# FONCTION POUR OUVRIR LE NAVIGATEUR
+# =============================
+def open_browser():
+    """Ouvre le navigateur après un délai"""
+    time.sleep(1.5)  # Attendre que le serveur soit prêt
+    webbrowser.open("http://127.0.0.1:8000")
+
+
+# =============================
+# LANCEMENT AUTO DU NAVIGATEUR
+# =============================
+@app.on_event("startup")
+async def startup_event():
+    """Événement au démarrage de l'application"""
+    print(" Application démarrée!")
+    print(" Ouverture automatique du navigateur...")
+    # Ouvrir le navigateur dans un thread séparé
+    threading.Thread(target=open_browser, daemon=True).start()
+
+
+# =============================
+# POINT D'ENTRÉE PRINCIPAL
+# =============================
+if __name__ == "__main__":
+    import uvicorn
+    print(" Démarrage du serveur d'estimation immobilière...")
+    uvicorn.run(app, host="127.0.0.1", port=8000)
