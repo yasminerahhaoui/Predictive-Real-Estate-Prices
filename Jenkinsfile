@@ -11,9 +11,10 @@ pipeline {
         }
         stage('Test') {
             steps {
-                bat 'pytest tests\\'  // double backslash pour Windows
+                bat '"C:\\Users\\ELITEBOOK\\AppData\\Local\\Programs\\Python\\Python310\\Scripts\\pytest.exe" tests\\'
             }
         }
     }
 }
+
 
