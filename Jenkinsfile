@@ -9,13 +9,27 @@ pipeline {
                     credentialsId: 'github-token-app'
             }
         }
+        stage('Setup venv') {
+            steps {
+                bat """
+                python -m venv .venv
+                call .venv\\Scripts\\activate
+                python -m pip install --upgrade pip
+                python -m pip install pytest
+                """
+            }
+        }
         stage('Test') {
             steps {
-                bat 'pytest test_app.py'
+                bat """
+                call .venv\\Scripts\\activate
+                python -m pytest test_app.py
+                """
             }
         }
     }
 }
+
 
 
 
