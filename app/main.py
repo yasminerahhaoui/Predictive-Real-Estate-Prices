@@ -50,7 +50,9 @@ app.add_middleware(
 # SERVIR LES FICHIERS STATIQUES
 # =============================
 # Monter le dossier static pour servir CSS, JS, images, etc.
-app.mount("/static", StaticFiles(directory="static"), name="static")
+if os.path.isdir("static"):
+    app.mount("/static", StaticFiles(directory="static"), name="static")
+
 
 # =============================
 # ROUTE PRINCIPALE - SERVIR INDEX.HTML
