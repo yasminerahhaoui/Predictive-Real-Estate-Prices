@@ -11,9 +11,9 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh 'pytest tests/'  // si tu as des tests Python
+                bat 'pytest tests\\'  // double backslash pour Windows
             }
         }
-
     }
 }
+
