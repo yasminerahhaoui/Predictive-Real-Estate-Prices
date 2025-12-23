@@ -84,10 +84,10 @@ class UserInput(BaseModel):
 @app.post("/predict")
 def predict_price(user: UserInput):
     if model is None:
-    return {
-        "predicted_price_MAD": 0.0,
-        "formatted_price": "0.00 MAD"
-    }
+        return {
+            "predicted_price_MAD": 0.0,
+            "formatted_price": "0.00 MAD"
+        }
 
     # --- Encodage type de bien ---
     type_bien_cols = [
@@ -105,7 +105,7 @@ def predict_price(user: UserInput):
     ville_encoded = hash(user.ville.lower()) % 100
 
     # --- Target encoding quartier ---
-    quartier_target_encoded = 12000.0  # fallback global mean
+    quartier_target_encoded = 12000.0
 
     # --- Features dérivées ---
     prix_m2 = 10000
@@ -136,7 +136,6 @@ def predict_price(user: UserInput):
     log_price = model.predict(df)[0]
     predicted_price = float(np.expm1(log_price))
 
-    # --- Retourner la prédiction réelle ---
     return {
         "predicted_price_MAD": predicted_price,
         "formatted_price": f"{predicted_price:,.2f} MAD"
