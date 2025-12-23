@@ -15,7 +15,14 @@ import time
 # =============================
 # CHARGEMENT DES OBJETS
 # =============================
-model = joblib.load("models/best_price_model.pkl")
+import os
+
+MODEL_PATH = "models/best_price_model.pkl"
+
+model = None
+if os.path.exists(MODEL_PATH):
+    model = joblib.load(MODEL_PATH)
+
 df_ref = pd.read_csv("data/data_final.csv", sep=None, engine="python")
 
 # Encoder ville (identique entraînement)
@@ -76,6 +83,12 @@ class UserInput(BaseModel):
 # =============================
 @app.post("/predict")
 def predict_price(user: UserInput):
+    if model is None:
+    return {
+        "predicted_price_MAD": 0.0,
+        "formatted_price": "0.00 MAD"
+    }
+
     # --- Encodage type de bien ---
     type_bien_cols = [
         'bien_appartement', 'bien_bureau',
