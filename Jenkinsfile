@@ -11,10 +11,11 @@ pipeline {
         }
         stage('Test') {
             steps {
-                bat '"C:\\Users\\ELITEBOOK\\AppData\\Local\\Programs\\Python\\Python310\\Scripts\\pytest.exe" tests\\'
+                bat 'pytest test_app.py'
             }
         }
     }
 }
+
 
 
